@@ -60,7 +60,15 @@
 <ul>
   <li><strong>Thông tin đăng nhập SSO:</strong> ứng dụng đăng nhập vào hệ thống của doanh nghiệp mà bạn làm việc bằng giao thức OpenID Connect (authorization code + PKCE) ngay trong ứng dụng. Các mã truy cập (access/refresh token) chỉ được lưu <strong>trên thiết bị của bạn</strong> trong bộ nhớ bảo mật của hệ điều hành (Android Keystore / iOS Keychain) và không được chia sẻ cho bên thứ ba.</li>
   <li><strong>Mã QR ghép nối:</strong> ứng dụng dùng camera để quét mã QR nhằm ghép nối an toàn với hệ thống của doanh nghiệp. Việc xác thực dựa trên khóa công khai được nhúng sẵn trong ứng dụng; ứng dụng không tự động ghép nối với hệ thống lạ.</li>
-  <li><strong>Vị trí:</strong> ứng dụng chỉ truy cập vị trí khi bạn sử dụng tính năng liên quan (ví dụ: chấm công, ghi nhận công tác bằng camera) và khi bạn cấp quyền. Vị trí được gửi tới hệ thống doanh nghiệp mà bạn đã ghép nối để phục vụ chính tính năng đó, không dùng để theo dõi hành vi quảng cáo.</li>
+  <li><strong>Vị trí (chi tiết cho tính năng chụp timemark / chấm công):</strong>
+    <ul>
+      <li><strong>Khi nào lấy:</strong> chỉ khi bạn chủ động mở tính năng chụp ảnh timemark (chấm công, ghi nhận công tác) và cấp quyền vị trí. Ứng dụng <strong>không</strong> truy cập vị trí trong nền, không định vị liên tục, không chạy khi bạn không sử dụng tính năng này.</li>
+      <li><strong>Lấy gì:</strong> toạ độ GPS độ chính xác cao (vĩ độ, kinh độ) tại thời điểm chụp, và địa chỉ dạng chữ (đường, phường/xã, quận/huyện, tỉnh/thành) được phân giải ngược từ toạ độ bằng dịch vụ định vị địa lý của hệ điều hành (Apple trên iOS, Google trên Android).</li>
+      <li><strong>Dùng để làm gì:</strong> toạ độ và địa chỉ được in thành dòng chữ đóng dấu lên ảnh chụp (cùng ngày, giờ) tạo thành "ảnh timemark" phục vụ chứng thực chấm công/công tác.</li>
+      <li><strong>Gửi đi đâu:</strong> ảnh timemark đã đóng dấu được trả về trang web của doanh nghiệp mà bạn đã ghép nối (đang mở trong khung web bảo mật của ứng dụng); doanh nghiệp của bạn lưu ảnh này vào hệ thống chấm công của họ. Nhà phát triển ứng dụng (Instratech) <strong>không</strong> có máy chủ lưu trữ vị trí và không nhận bản sao dữ liệu vị trí của bạn.</li>
+      <li><strong>Thu hồi:</strong> bạn có thể từ chối quyền vị trí — khi đó ảnh timemark vẫn chụp được nhưng không có dòng đóng dấu toạ độ/địa chỉ, hoặc tính năng có thể từ chối tuỳ cấu hình của doanh nghiệp.</li>
+    </ul>
+  </li>
   <li><strong>Camera và nhận diện chữ trên ảnh:</strong> camera dùng để quét QR và chụp ảnh phục vụ tính năng của doanh nghiệp. Việc nhận diện văn bản trên ảnh (ML Kit của Google) được xử lý <strong>ngay trên thiết bị</strong>; ứng dụng không tự tải ảnh của bạn lên máy chủ nào.</li>
   <li><strong>Thông báo đẩy:</strong> ứng dụng dùng Firebase Cloud Messaging (Google) để gửi thông báo. Mã thông báo thiết bị (push token) được Google xử lý theo điều khoản dịch vụ của Firebase.</li>
   <li><strong>Kiểm tra phiên bản:</strong> ứng dụng truy vấn địa chỉ <code>epm-mobile-version.pages.dev</code> để biết phiên bản mới nhất. Truy vấn này không gửi kèm dữ liệu cá nhân nào.</li>
@@ -108,7 +116,15 @@
 <ul>
   <li><strong>SSO login information:</strong> the app signs you in to your employer's system using OpenID Connect (authorization code + PKCE) inside the app. Access/refresh tokens are stored <strong>only on your device</strong> in the OS secure storage (Android Keystore / iOS Keychain) and are never shared with third parties.</li>
   <li><strong>QR pairing:</strong> the camera is used to scan a pairing QR code that safely links the app to your organization's system. Trust is established with public keys embedded in the app; the app never pairs with unknown systems automatically.</li>
-  <li><strong>Location:</strong> accessed only when you use a feature that needs it (e.g. attendance or field check-in with camera) and only with your permission. The location is sent to the paired organization's system for that feature only; it is not used for advertising or profiling.</li>
+  <li><strong>Location (details for the timemark / attendance camera):</strong>
+    <ul>
+      <li><strong>When:</strong> only when you actively open the timemark photo feature (attendance / field check-in) and grant location permission. The app does <strong>not</strong> access location in the background, does not track continuously, and does nothing while you are not using this feature.</li>
+      <li><strong>What:</strong> a high-accuracy GPS fix (latitude, longitude) at the moment of capture, plus a human-readable address (street, ward, district, province) resolved from the coordinates by the operating system's geocoding service (Apple on iOS, Google on Android).</li>
+      <li><strong>Why:</strong> the coordinates and address are printed as a text stamp onto the captured photo (together with date and time), producing the "timemark photo" used to verify attendance.</li>
+      <li><strong>Where it goes:</strong> the stamped photo is handed back to your organization's web system, opened inside the app's secure web view; your organization stores it in its attendance system. The app developer (Instratech) runs <strong>no</strong> location server and never receives a copy of your location data.</li>
+      <li><strong>Your control:</strong> you can deny the location permission — the photo can still be taken but without the coordinates/address stamp (or the feature may decline, depending on your organization's configuration).</li>
+    </ul>
+  </li>
   <li><strong>Camera and on-device text recognition:</strong> the camera is used for QR scanning and work-related photos. Text recognition in images (Google ML Kit) runs <strong>on the device</strong>; the app does not upload your photos to any server by itself.</li>
   <li><strong>Push notifications:</strong> the app uses Firebase Cloud Messaging (Google) to deliver notifications. The device push token is processed by Google under the Firebase terms of service.</li>
   <li><strong>Update check:</strong> the app queries <code>epm-mobile-version.pages.dev</code> for the latest app version. This request carries no personal data.</li>
